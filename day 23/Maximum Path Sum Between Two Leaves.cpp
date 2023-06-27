@@ -20,23 +20,35 @@
     };
 
 ************************************************************/
-long long help(TreeNode<int>*root , long long &ans)
+long long ans=0;
+long long help(TreeNode<int>* root)
 {
-    if(root==NULL) return -1e9;
-    if(root->left==NULL and root->right==NULL) return root->val;
-    long long l=help(root->left , ans);
-    long long r=help(root->right , ans);
-    if(l==-1e9 or r==-1e9)
+    if(root==NULL) return 0;
+    long long leftmax=help(root->left);
+    long long rightmax=help(root->right);
+    leftmax=max(leftmax , (long long)0);
+    rightmax=max(rightmax , (long long)0);
+    ans=max(ans , root->val+leftmax+rightmax );
+    return root->val+max(leftmax , rightmax);
+}
+void counter(TreeNode<int>*root , int &count)
+{
+    if(root==NULL) return ;
+    if(root->left==NULL and root->right==NULL)
     {
-        return max(l , r)+root->val;
+        count++;
+        return ;
     }
-    ans=max(ans , l+r+root->val);
-    return max(l , r)+root->val;
+    counter(root->left , count);
+    counter(root->right , count);
 }
 long long int findMaxSumPath(TreeNode<int> *root)
 {
-    long long ans=-1;
     if(root==NULL) return -1;
-    help(root , ans);
-    return ans;
+int count=0;
+counter(root , count);
+if(count==1) return -1;
+ans=root->val;
+help(root);
+return ans;
 }
